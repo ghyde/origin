@@ -24,46 +24,46 @@ function generate_acls() {
     n=0
     saw_wildcard=
     while read dest; do
-	if [[ "${dest}" =~ ^\w*$ || "${dest}" =~ ^# ]]; then
-	    # comment or blank line
-	    continue
-	fi
-	n=$(($n + 1))
+        if [[ "${dest}" =~ ^\w*$ || "${dest}" =~ ^# ]]; then
+            # comment or blank line
+            continue
+        fi
+        n=$(($n + 1))
 
-	if [[ "${dest}" == "*" ]]; then
-	    saw_wildcard=1
-	    continue
-	elif [[ -n "${saw_wildcard}" ]]; then
-	    die "Wildcard must be last rule, if present"
-	fi
+        if [[ "${dest}" == "*" ]]; then
+            saw_wildcard=1
+            continue
+        elif [[ -n "${saw_wildcard}" ]]; then
+            die "Wildcard must be last rule, if present"
+        fi
 
-	if [[ "${dest}" =~ ^! ]]; then
-	    rule=deny
-	    dest="${dest#!}"
-	else
-	    rule=allow
-	fi
+        if [[ "${dest}" =~ ^! ]]; then
+            rule=deny
+            dest="${dest#!}"
+        else
+            rule=allow
+        fi
 
-	echo ""
-	if [[ "${dest}" =~ ^${IPADDR_REGEX}${OPT_CIDR_MASK_REGEX}$ ]]; then
-	    echo acl dest$n dst "${dest}"
-	    echo http_access "${rule}" dest$n
-	elif [[ "${dest}" =~ ^${DOMAIN_REGEX}$ ]]; then
-	    echo acl dest$n dstdomain "${dest#\*}"
-	    echo http_access "${rule}" dest$n
-	elif [[ "${dest}" =~ ^${HOSTNAME_REGEX}$ ]]; then
-	    echo acl dest$n dstdomain "${dest}"
-	    echo http_access "${rule}" dest$n
-	else
-	    die "Bad destination '${dest}'"
-	fi
+        echo ""
+        if [[ "${dest}" =~ ^${IPADDR_REGEX}${OPT_CIDR_MASK_REGEX}$ ]]; then
+            echo acl dest$n dst "${dest}"
+            echo http_access "${rule}" dest$n
+        elif [[ "${dest}" =~ ^${DOMAIN_REGEX}$ ]]; then
+            echo acl dest$n dstdomain "${dest#\*}"
+            echo http_access "${rule}" dest$n
+        elif [[ "${dest}" =~ ^${HOSTNAME_REGEX}$ ]]; then
+            echo acl dest$n dstdomain "${dest}"
+            echo http_access "${rule}" dest$n
+        else
+            die "Bad destination '${dest}'"
+        fi
     done <<< "${EGRESS_HTTP_PROXY_DESTINATION}"
 
     echo ""
     if [[ -n "${saw_wildcard}" ]]; then
-	echo "http_access allow all"
+        echo "http_access allow all"
     else
-	echo "http_access deny all"
+        echo "http_access deny all"
     fi
 }
 
