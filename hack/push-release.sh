@@ -50,6 +50,7 @@ images=(
   openshift/origin-f5-router
   openshift/origin-egress-router
   openshift/origin-egress-http-proxy
+  openshift/origin-egress-dns-proxy
   openshift/origin-recycler
   openshift/origin-gitserver
   openshift/origin-cluster-capacity
