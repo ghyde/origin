@@ -146,6 +146,10 @@ case "${EGRESS_ROUTER_MODE:=legacy}" in
         setup_network
         ;;
 
+    dns-proxy)
+        setup_network
+        ;;
+
     unit-test)
         gen_iptables_rules
         ;;
